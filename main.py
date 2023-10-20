@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import *
 
 import json  # Importieren Sie die JSON-Bibliothek, um Daten in einer Datei zu speichern und zu laden.
 
@@ -43,7 +44,7 @@ def berechne_gesamtpreis_fuer_tisch():
                 speisen_preis = 0
             gesamtpreis_tisch += getraenke_preis + speisen_preis
 
-        gesamtpreis_label.config(text=f"Gesamtpreis für {tisch}: {gesamtpreis_tisch} $")
+        gesamtpreis_label.config(text=f"Gesamtpreis für {tisch}: {gesamtpreis_tisch} $", font=("Helvetica", 16))
         notizen_entry.delete(0, "end")  # Löschen Sie den Inhalt des Notizenfelds
         notizen_entry.insert(0, notizen)  # Setzen Sie die Notizen in das Notizenfeld
     else:
@@ -63,7 +64,7 @@ def berechne_preis():
     speisen_preis = essen[speisen_name] * int(anzahl_speisen) if anzahl_speisen else 0
     gesamtpreis = getraenke_preis + speisen_preis
 
-    gesamtpreis_label.config(text=f"Gesamtpreis: {gesamtpreis} $")
+    gesamtpreis_label.config(text=f"Preis: {gesamtpreis} $", font=("Helvetica", 16))
     aktualisiere_bestellungen_text()
 
     # Setzen Sie die Notizen in das Notizenfeld
@@ -179,7 +180,7 @@ def aktualisiere_ausgewaehlten_tisch(*args):
             text = f"{getraenke_name} ({anzahl_getraenke} Stück), {speisen_name} ({anzahl_speisen} Stück)\n"
             bestellungen_text.insert("end", text)
 
-        gesamtpreis_label.config(text=f"Gesamtpreis für {tisch}: {gesamtpreis_tisch} $")
+        gesamtpreis_label.config(text=f"Gesamtpreis für {tisch}: {gesamtpreis_tisch} $", font=("Helvetica", 16))
 
         # Aktualisieren des Notizenfelds mit den Notizen für diesen Tisch
         notizen_entry.delete(0, "end")
@@ -187,7 +188,7 @@ def aktualisiere_ausgewaehlten_tisch(*args):
 
     else:
         bestellungen_text.delete("1.0", "end")
-        gesamtpreis_label.config(text="Gesamtpreis: 0 $")
+        gesamtpreis_label.config(text="Gesamtpreis: 0 $", font=("Helvetica", 16))
         notizen_entry.delete(0, "end")  # Leere das Notizenfeld
 
     # Aktualisiere die Anzeige
@@ -328,7 +329,7 @@ if __name__ == "__main__":
     aktuell_ausgewaehlter_tisch = None
 
     # Tischauswahl
-    tisch_label = tk.Label(app, text="Tisch auswählen:")
+    tisch_label = tk.Label(app, text="Tisch:")
     tisch_label.grid(row=0, column=0)
 
     tisch_auswahl = tk.StringVar()
@@ -337,7 +338,7 @@ if __name__ == "__main__":
     tisch_dropdown.grid(row=0, column=1)
 
     # Getränkeauswahl
-    getraenke_label = tk.Label(app, text="Getränke auswählen:")
+    getraenke_label = tk.Label(app, text="Getränke:")
     getraenke_label.grid(row=1, column=0)
 
     getraenke_auswahl = tk.StringVar()
@@ -351,7 +352,7 @@ if __name__ == "__main__":
     getraenke_anzahl_entry.grid(row=2, column=1)
 
     # Speisenauswahl
-    speisen_label = tk.Label(app, text="Speisen auswählen:")
+    speisen_label = tk.Label(app, text="Speisen:")
     speisen_label.grid(row=3, column=0)
 
     speisen_auswahl = tk.StringVar()
@@ -399,22 +400,22 @@ if __name__ == "__main__":
 
     # Textfeld für Bestellungen
     bestellungen_text = tk.Text(app, height=10, width=40)
-    bestellungen_text.grid()
+    bestellungen_text.grid(row=9, column=0)
 
     # Label für den Gesamtpreis
-    gesamtpreis_label = tk.Label(app, text="Gesamtpreis: 0 $")
+    gesamtpreis_label = tk.Label(app, text="Gesamtpreis: 0 $", font=("Helvetica", 16))
     gesamtpreis_label.grid()
 
     # Button zum Berechnen des Gesamtpreises für den ausgewählten Tisch
     berechnen_tisch_button = tk.Button(app, text="Rechnung Bitte", command=berechne_gesamtpreis_fuer_tisch)
-    berechnen_tisch_button.grid()
+    berechnen_tisch_button.grid(row=9, column=1)
 
     # Button zum Leeren des Tischs
     tisch_leeren_button = tk.Button(app, text="Tisch leeren", command=tisch_leeren)
-    tisch_leeren_button.grid()
+    tisch_leeren_button.grid(row=10, column=1)
 
     # Button für die Optionen
     optionen_button = tk.Button(app, text="Optionen", command=optionen_menu)
-    optionen_button.grid()
+    optionen_button.grid(row=11, column=1)
 
     app.mainloop()
