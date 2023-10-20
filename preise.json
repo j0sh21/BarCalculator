@@ -1,0 +1,23 @@
+{
+    "getraenke": {
+        "Cola": 5.0,
+        "Sprunk": 5.0,
+        "Wasser": 3.0,
+        "Rum": 8.0,
+        "Whisky": 4.0,
+        "Vodka": 8.0,
+        "Mochito": 3.0,
+        "Cosmopolitan": 10.0,
+        "Gimlet": 5.0,
+        "OldFashioned": 10.0,
+        "Vodka 2": 7.0,
+        "Bier": 14.0,
+        "Saft": 5.0,
+        "Energy": 55.0
+    },
+    "essen": {
+        "Burger": 15.0,
+        "Sandwhich": 7.0,
+        "N\u00c3\u00bcsse": 5.0
+    }
+}
