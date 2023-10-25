@@ -57,8 +57,6 @@ def speichere_preise():
         json.dump(daten, file, indent=4)
 
 
-
-
 # Funktion zum Berechnen des Gesamtpreises für den ausgewählten Tisch
 # Funktion zum Berechnen des Gesamtpreises für den ausgewählten Tisch
 def berechne_gesamtpreis_fuer_tisch_old(session):
@@ -149,9 +147,12 @@ def berechne_preis(session, gesamtpreis_label):
 def get_bestellungen_fuer_nutzer_und_tisch(nutzername, tisch, abgerechnet):
 
     session = connect_db()
-
+    optionen = lade_optionen()
+    tisch = tisch_auswahl.get()
+    username = optionen["bar_user"]  # Hier den gewünschten Benutzernamen eintragen
+    user = session.query(User).filter_by(username=username).first()
     # Führen Sie eine Abfrage in der Datenbank durch, um die Bestellungen für den angegebenen Nutzer und Tisch abzurufen
-    bestellungen = session.query(Order).filter_by(user_id=nutzername, tisch=tisch, abgerechnet=abgerechnet).all()
+    bestellungen = session.query(Order).filter_by(user_id=user.id, tisch=tisch, abgerechnet=abgerechnet).all()
 
     # Schließen Sie die Datenbankverbindung
     session.close()
@@ -236,17 +237,13 @@ def tisch_leeren(session):
     username = optionen["bar_user"]  # Hier den gewünschten Benutzernamen eintragen
     user = session.query(User).filter_by(username=username).first()
 
-
-
-
-    if tisch in tisch_bestellungen:
-        for order in session.query(Order).filter_by(user_id=user, tisch=tisch, abgerechnet=0):
+    for order in session.query(Order).filter_by(user_id=user.id, tisch=tisch, abgerechnet=0):
             order.abgerechnet = 1
-        session.commit()
-        session.close()
+    session.commit()
 
-        # Iterieren Sie durch die Bestellungen und entfernen Sie diejenigen, die dem Benutzernamen entsprechen
-        tisch_bestellungen[tisch] = [bestellung for bestellung in tisch_bestellungen[tisch] if bestellung[4] != username]
+
+    # Iterieren Sie durch die Bestellungen und entfernen Sie diejenigen, die dem Benutzernamen entsprechen
+    tisch_bestellungen[tisch] = [bestellung for bestellung in tisch_bestellungen[tisch] if bestellung[4] != username]
 
     if tisch in tisch_notizen:
         tisch_notizen[tisch] = ""  # Leeren Sie die Notizen für diesen Tisch unter Berücksichtigung des Benutzernamens
@@ -254,6 +251,7 @@ def tisch_leeren(session):
     # Aktualisieren Sie das Textfeld mit den Bestellungen und den Gesamtpreis
     aktualisiere_ausgewaehlten_tisch(session)
     berechne_preis(session, gesamtpreis_label)
+    session.close()
 
 # Funktion zum Aktualisieren der ausgewählten Tischbestellungen
 def aktualisiere_ausgewaehlten_tisch(session):
@@ -263,9 +261,15 @@ def aktualisiere_ausgewaehlten_tisch(session):
     tisch_auswahl_geaendert(session)
     tisch = tisch_auswahl.get()
 
+
+    optionen = lade_optionen()
+    tisch = tisch_auswahl.get()
+    username = optionen["bar_user"]  # Hier den gewünschten Benutzernamen eintragen
+    user = session.query(User).filter_by(username=username).first()
+
     if tisch in tisch_bestellungen:
         #
-        bestellungen = session.query(Order).filter_by(user_id=1, tisch=tisch, abgerechnet=0).all()
+        bestellungen = session.query(Order).filter_by(user_id=user.id, tisch=tisch, abgerechnet=0).all()
 
 
         gesamtpreis_tisch = 0  # Initialisieren Sie den Gesamtpreis für diesen Tisch
@@ -511,39 +515,44 @@ def oeffne_optionen_fenster():
     optionen_fenster = tk.Toplevel(app)
     optionen_fenster.title("Datenbank-Optionen")
 
-    # Label und Eingabefelder für die Datenbank-Verbindungseinstellungen
+    optionen = lade_optionen()
+
+    # Label and Entry widgets for database connection settings
     server_ip_label = ttk.Label(optionen_fenster, text="Server IP:")
     server_ip_label.grid(row=0, column=0, padx=5, pady=5)
     server_ip_entry = ttk.Entry(optionen_fenster)
     server_ip_entry.grid(row=0, column=1)
+    server_ip_entry.insert(0, optionen.get("server_ip", ""))
 
     db_user_label = ttk.Label(optionen_fenster, text="Datenbank Benutzer:")
     db_user_label.grid(row=1, column=0, padx=5, pady=5)
     db_user_entry = ttk.Entry(optionen_fenster)
     db_user_entry.grid(row=1, column=1)
+    db_user_entry.insert(0, optionen.get("db_user", ""))
 
     db_passwort_label = ttk.Label(optionen_fenster, text="Datenbank Passwort:")
     db_passwort_label.grid(row=2, column=0, padx=5, pady=5)
-    db_passwort_entry = ttk.Entry(optionen_fenster, show="*")  # Passwort-Feld
+    db_passwort_entry = ttk.Entry(optionen_fenster, show="*")  # Password field
     db_passwort_entry.grid(row=2, column=1)
+    db_passwort_entry.insert(0, optionen.get("db_passwort", ""))
 
     bar_user_label = ttk.Label(optionen_fenster, text="Bar Benutzer:")
     bar_user_label.grid(row=3, column=0, padx=5, pady=5)
     bar_user_entry = ttk.Entry(optionen_fenster)
     bar_user_entry.grid(row=3, column=1)
+    bar_user_entry.insert(0, optionen.get("bar_user", ""))
 
     bar_passwort_label = ttk.Label(optionen_fenster, text="Bar Passwort:")
     bar_passwort_label.grid(row=4, column=0, padx=5, pady=5)
-    bar_passwort_entry = ttk.Entry(optionen_fenster, show="*")  # Passwort-Feld
+    bar_passwort_entry = ttk.Entry(optionen_fenster, show="*")  # Password field
     bar_passwort_entry.grid(row=4, column=1)
+    bar_passwort_entry.insert(0, optionen.get("bar_passwort", ""))
 
     speichern_button = ttk.Button(optionen_fenster, text="Speichern",
                                   command=lambda: speichern_optionen(server_ip_entry.get(), db_user_entry.get(),
                                                                      db_passwort_entry.get(), bar_user_entry.get(),
                                                                      bar_passwort_entry.get(), optionen_fenster))
     speichern_button.grid(row=5, column=1, padx=5, pady=10)
-
-
 
 def speichern_optionen(server_ip_entry, db_user_entry, db_passwort_entry, bar_user_entry, bar_passwort_entry, optionen_fenster):
     # Hier werden die Datenbank-Verbindungsoptionen und andere Optionen gesammelt
@@ -720,10 +729,6 @@ if __name__ == "__main__":
     # Label für den Gesamtpreis
     gesamtpreis_label = tk.Label(app, text="Gesamtpreis: 0 $", font=("Helvetica", 16))
     gesamtpreis_label.grid()
-
-    # Button zum Berechnen des Gesamtpreises
-    berechnen_button = tk.Button(app, text="Sofort Zahlen", command = lambda:berechne_preis(session, gesamtpreis_label))
-    berechnen_button.grid(row=8, column=1)
 
     # Button zum Speichern der Bestellung
     speichern_button = tk.Button(app, text="Hinzufügen", command = lambda:bestellung_speichern(session))
