@@ -549,12 +549,12 @@ def oeffne_optionen_fenster():
     bar_passwort_entry.insert(0, optionen.get("bar_passwort", ""))
 
     speichern_button = ttk.Button(optionen_fenster, text="Speichern",
-                                  command=lambda: speichern_optionen(server_ip_entry.get(), db_user_entry.get(),
+                                  command=lambda: speichern_optionen_srv(server_ip_entry.get(), db_user_entry.get(),
                                                                      db_passwort_entry.get(), bar_user_entry.get(),
                                                                      bar_passwort_entry.get(), optionen_fenster))
     speichern_button.grid(row=5, column=1, padx=5, pady=10)
 
-def speichern_optionen(server_ip_entry, db_user_entry, db_passwort_entry, bar_user_entry, bar_passwort_entry, optionen_fenster):
+def speichern_optionen_srv(server_ip_entry, db_user_entry, db_passwort_entry, bar_user_entry, bar_passwort_entry, optionen_fenster):
     # Hier werden die Datenbank-Verbindungsoptionen und andere Optionen gesammelt
     optionen = {
         "server_ip": server_ip_entry,
